@@ -12,4 +12,4 @@ Run `ionic generate` to generate a new component.
 
 ## Build
 
-Run `npm run builf` to build the project into **www** directory. 
+Run `npm run build` to build the project into **www** directory. 
