@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Recipe } from './recipe.model';
-import { Subject, Subscription, Subscribable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -46,19 +45,7 @@ export class RecipesService {
     }
   ];
 
-  private recipesSubject = new Subject<Recipe[]>();
-
-  constructor() {
-    this.recipesSubject.subscribe(recipes => {
-      this.recipes = recipes;
-    });
-  }
-
-  subscribe(func: (recipes: Recipe[]) => void): Subscription {
-    const subscription = this.recipesSubject.subscribe(func);
-    this.recipesSubject.next(this.getAllRecipes());
-    return subscription;
-  }
+  constructor() { }
 
   getAllRecipes() {
     return [...this.recipes];
@@ -76,7 +63,6 @@ export class RecipesService {
     this.recipes = this.recipes.filter(recipe => {
       return recipe.id !== recipeId;
     });
-    this.recipesSubject.next(this.getAllRecipes());
   }
 
 }

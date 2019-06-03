@@ -11,16 +11,32 @@ import { Subscription } from 'rxjs';
 export class RecipesPage implements OnInit, OnDestroy {
 
   recipes: Recipe[];
-  private recipesSubscription: Subscription;
 
   constructor(private recipesService: RecipesService) { }
 
+
   ngOnInit() {
-    this.recipesSubscription = this.recipesService.subscribe(recipes => this.recipes = recipes);
+    console.log('ngOnInit');
+  }
+
+  ionViewWillEnter() {
+    console.log('ionViewWillEnter');
+    this.recipes = this.recipesService.getAllRecipes();
+  }
+
+  ionViewDidEnter() {
+    console.log('ionViewDidEnter');
+  }
+
+  ionViewWillLeave() {
+    console.log('ionViewWillLeave');
+  }
+
+  ionViewDidLeave() {
+    console.log('ionViewDidLeave');
   }
 
   ngOnDestroy() {
-    this.recipesSubscription.unsubscribe();
+    console.log('ngOnDestroy');
   }
-
 }
