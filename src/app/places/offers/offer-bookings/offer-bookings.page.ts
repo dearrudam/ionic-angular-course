@@ -26,7 +26,7 @@ export class OfferBookingsPage implements OnInit {
         return;
       }
       const placeId = params.get('placeId');
-      this.place = this.placesService.places.find(p => p.id === placeId);
+      this.place = this.placesService.getPlace(placeId);
     });
   }
 
