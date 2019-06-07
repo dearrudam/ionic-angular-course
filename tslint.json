@@ -4,6 +4,7 @@
     "codelyzer"
   ],
   "rules": {
+    "variable-name": false,
     "array-type": false,
     "arrow-parens": false,
     "deprecation": {
@@ -69,7 +70,11 @@
     "use-life-cycle-interface": true,
     "use-pipe-transform-interface": true,
     "one-variable-per-declaration": false,
-    "component-class-suffix": [true, "Page", "Component"],
+    "component-class-suffix": [
+      true,
+      "Page",
+      "Component"
+    ],
     "directive-class-suffix": true
   }
 }
