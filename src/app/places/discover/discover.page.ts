@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { IonInfiniteScroll, MenuController } from '@ionic/angular';
+import { SegmentChangeEventDetail } from '@ionic/core';
 import { Place } from '../place.model';
 import { PlacesService } from '../places.service';
-import { MenuController, IonInfiniteScroll } from '@ionic/angular';
+
 
 @Component({
   selector: 'app-discover',
@@ -32,17 +34,21 @@ export class DiscoverPage implements OnInit {
     this.menuController.toggle();
   }
 
-  loadPlaces(event) {
+  onScrolling(event: IonInfiniteScroll) {
 
-    window.setTimeout(() => {
+    setTimeout(() => {
       this.listedLoadedPlaces.push(...this.loadedPlaces.slice(this.cursor, this.cursor + this.itemsPerPage));
       this.cursor = this.listedLoadedPlaces.length;
-      event.target.complete();
+      event.complete();
 
       if (this.cursor >= this.loadedPlaces.length) {
-        event.target.disabled = true;
+        event.disabled = true;
       }
     }, 500);
 
+  }
+
+  onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {
+    console.log(event.detail);
   }
 }
