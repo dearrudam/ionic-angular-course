@@ -31,7 +31,25 @@ export class PlacesService {
       'The Foggy Palace',
       'Not your average city trip!',
       'https://static.wixstatic.com/media/e82b44_570944c45adb49fb9a1f624ac0b0ef79.jpg',
-      99.99)
+      99.99),
+    new Place(
+      'p4',
+      'The Foggy Palace 2',
+      'Not your average city trip!',
+      'https://static.wixstatic.com/media/e82b44_570944c45adb49fb9a1f624ac0b0ef79.jpg',
+      88.99),
+    new Place(
+      'p5',
+      'The Foggy Palace 3',
+      'Not your average city trip!',
+      'https://static.wixstatic.com/media/e82b44_570944c45adb49fb9a1f624ac0b0ef79.jpg',
+      77.99),
+    new Place(
+      'p6',
+      'The Foggy Palace 4',
+      'Not your average city trip!',
+      'https://static.wixstatic.com/media/e82b44_570944c45adb49fb9a1f624ac0b0ef79.jpg',
+      77.99)
   ];
 
   getPlace(placeId: string): Place {
