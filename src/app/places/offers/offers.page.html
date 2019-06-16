@@ -15,19 +15,17 @@
 <ion-content padding>
   <ion-grid>
     <ion-row>
-      <ion-col>
-        <ion-col size="12" size-sm="8" offset-sm="2" text-center>
-          <ion-list>
-            <ion-item-sliding *ngFor="let offer of offers" #slidingItem>
-              <app-offer-item [offer]="offer"></app-offer-item>
-              <ion-item-options side="end">
-                <ion-item-option color="secondary" (click)="onEdit(offer.id,slidingItem)">
-                  <ion-icon name="create" slot="icon-only"></ion-icon>
-                </ion-item-option>
-              </ion-item-options>
-            </ion-item-sliding>
-          </ion-list>
-        </ion-col>
+      <ion-col size="12" size-sm="8" offset-sm="2" text-center>
+        <ion-list>
+          <ion-item-sliding *ngFor="let offer of offers" #slidingItem>
+            <app-offer-item [offer]="offer"></app-offer-item>
+            <ion-item-options side="end">
+              <ion-item-option color="secondary" (click)="onEdit(offer.id,slidingItem)">
+                <ion-icon name="create" slot="icon-only"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        </ion-list>
       </ion-col>
     </ion-row>
   </ion-grid>
