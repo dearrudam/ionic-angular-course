@@ -11,6 +11,8 @@ import { NgForm } from '@angular/forms';
 })
 export class AuthPage implements OnInit {
 
+  isLogin = true;
+
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -18,6 +20,10 @@ export class AuthPage implements OnInit {
   ) { }
 
   ngOnInit() {
+  }
+
+  onSwitchAuthMode() {
+    this.isLogin = !this.isLogin;
   }
 
   onLogin() {
