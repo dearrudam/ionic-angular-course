@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-auth',
@@ -33,5 +34,9 @@ export class AuthPage implements OnInit {
           this.router.navigateByUrl('/places/tabs/discover');
         }, 1500);
       });
+  }
+
+  onSubmit(authForm: NgForm) {
+    console.log(authForm);
   }
 }
