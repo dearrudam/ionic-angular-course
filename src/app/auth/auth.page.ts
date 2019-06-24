@@ -26,8 +26,7 @@ export class AuthPage implements OnInit {
     this.isLogin = !this.isLogin;
   }
 
-  onLogin() {
-    this.authService.login();
+  onSubmit(authForm: NgForm) {
     this.loadingController
       .create({
         keyboardClose: true,
@@ -35,14 +34,19 @@ export class AuthPage implements OnInit {
       })
       .then(loadingEl => {
         loadingEl.present();
-        setTimeout(() => {
-          loadingEl.dismiss();
-          this.router.navigateByUrl('/places/tabs/discover');
-        }, 1500);
-      });
-  }
+        this.authService.
+          login(authForm.value.email, authForm.value.password)
+          .then(() => {
+            setTimeout(() => {
+              loadingEl.dismiss();
+              this.router.navigateByUrl('/places/tabs/discover');
+            }, 1500);
+          })
+          .catch((err) => {
+            console.log(err);
+            loadingEl.dismiss();
+          });
 
-  onSubmit(authForm: NgForm) {
-    console.log(authForm);
+      });
   }
 }
