@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { IonItemSliding, LoadingController, ModalController, AlertController } from '@ionic/angular';
+import { IonItemSliding, LoadingController, ModalController, AlertController, ToastController } from '@ionic/angular';
 
 import { BookingService } from './booking.service';
 import { Booking } from './booking.model';
@@ -14,18 +14,27 @@ import { ignoreElements } from 'rxjs/operators';
 export class BookingsPage implements OnInit, OnDestroy {
 
   loadedBookings: Booking[];
+  isLoading = false;
   private bookingsSub: Subscription;
 
   constructor(
     private bookingService: BookingService,
     private alertController: AlertController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private toastController: ToastController,
   ) { }
 
   ngOnInit() {
     this.bookingsSub = this.bookingService.bookings.subscribe(bookings => {
+      this.isLoading = true;
       this.loadedBookings = bookings;
+      this.isLoading = false;
     });
+  }
+
+  ionViewWillEnter() {
+    this.isLoading = true;
+    this.bookingService.fetchBookings().subscribe();
   }
 
   ngOnDestroy() {
@@ -56,10 +65,20 @@ export class BookingsPage implements OnInit, OnDestroy {
             })
               .then(loadingEl => {
                 loadingEl.present();
+                slidingBookingItem.close();
                 this.bookingService.cancelBooking(bookingId).subscribe(() => {
-                  slidingBookingItem.close();
                   loadingEl.dismiss();
-                  console.log('Should cancel the booking', bookingId);
+                  this.toastController
+                    .create({
+                      animated: true,
+                      duration: 3000,
+                      message: `The booking ${bookingId} has been canceled!`,
+                      showCloseButton: true,
+                      closeButtonText: 'Close'
+                    })
+                    .then(toastEL => {
+                      toastEL.present();
+                    });
                 });
               });
           }

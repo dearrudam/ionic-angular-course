@@ -1,21 +1,11 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subscriber } from 'rxjs';
+import { BehaviorSubject, Observable, Subscriber, of } from 'rxjs';
 import { take, map, tap, delay, switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 
 import { AuthService } from '../auth/auth.service';
 import { Place } from './place.model';
 
-
-interface PlaceData {
-  title: string;
-  description: string;
-  imageUrl: string;
-  price: number;
-  availableFrom: string;
-  availableTo: string;
-  userId?: string;
-}
 
 // [
 //   new Place(
@@ -68,7 +58,18 @@ interface PlaceData {
 //     new Date('2019-12-31'))
 // ]
 
-const endpoint = 'https://ionic-angular-project-9937b.firebaseio.com/offered-places.json';
+const endpoint = 'https://ionic-angular-project-9937b.firebaseio.com';
+
+interface PlaceData {
+  title: string;
+  description: string;
+  imageUrl: string;
+  price: number;
+  availableFrom: string;
+  availableTo: string;
+  userId?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -86,7 +87,7 @@ export class PlacesService {
 
   fetchPlaces() {
     return this.http
-      .get<{ [key: string]: PlaceData }>(endpoint)
+      .get<{ [key: string]: PlaceData }>(`${endpoint}/offered-places.json`)
       .pipe(
         map(resData => {
           const places = [];
@@ -113,9 +114,24 @@ export class PlacesService {
   }
 
   getPlace(placeId: string): Observable<Place> {
-    return this._places.pipe(take(1), map(places => {
-      return places.find(p => p.id === placeId);
-    }));
+
+    return this.http
+      .get<PlaceData>(
+        `${endpoint}/offered-places/${placeId}.json`
+      ).pipe(
+        map(placeData => {
+          return new Place(
+            placeId,
+            placeData.title,
+            placeData.description,
+            placeData.imageUrl,
+            placeData.price,
+            new Date(placeData.availableFrom),
+            new Date(placeData.availableTo),
+            placeData.userId
+          );
+        })
+      );
   }
 
   addPlace(title: string,
@@ -135,7 +151,7 @@ export class PlacesService {
       this.authService.userId
     );
     return this.http
-      .post<{ name: string }>(endpoint, {
+      .post<{ name: string }>(`${endpoint}/offered-places.json`, {
         ...newPlace, id: null
       }).pipe(
         switchMap(resData => {
@@ -149,16 +165,23 @@ export class PlacesService {
   }
 
   updatePlace(placeId: string, title: string, description: string) {
+
+    let updatedPlaces: Place[];
     return this.places.pipe(
       take(1),
-      delay(1000),
-      tap(places => {
+      switchMap(places => {
+        if (!places || places.length <= 0) {
+          return this.fetchPlaces();
+        } else {
+          return of(places);
+        }
+      }),
+      switchMap(places => {
+        updatedPlaces = [...places];
+        const updatedPlaceIndex = updatedPlaces.findIndex(p => p.id === placeId);
 
-        const updatePlaces = [...places];
-        const updatedPlaceIndex = updatePlaces.findIndex(p => p.id === placeId);
-
-        const oldPlace = updatePlaces[updatedPlaceIndex];
-        updatePlaces[updatedPlaceIndex] = new Place(
+        const oldPlace = updatedPlaces[updatedPlaceIndex];
+        updatedPlaces[updatedPlaceIndex] = new Place(
           oldPlace.id,
           title,
           description,
@@ -168,8 +191,13 @@ export class PlacesService {
           oldPlace.availableTo,
           oldPlace.userId
         );
-
-        this._places.next(updatePlaces);
+        return this.http.put(
+          `${endpoint}/offered-places/${placeId}.json`,
+          { ...updatedPlaces[updatedPlaceIndex], id: null }
+        );
+      }),
+      tap(places => {
+        this._places.next(updatedPlaces);
       }));
   }
 }

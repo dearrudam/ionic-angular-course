@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class AuthService {
 
-  private _userId: string;
+  private _userId = 'dearrudam@gmail.com';
   private _userIsAuthenticated = true;
 
   get useIsAuthenticated() {
@@ -17,8 +17,6 @@ export class AuthService {
   }
 
   constructor() {
-    this._userId = 'dearrudam@gmail.com';
-    this._userIsAuthenticated = true;
   }
 
   async login(email: string, password: string): Promise<any> {
