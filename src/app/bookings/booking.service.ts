@@ -36,6 +36,21 @@ export class BookingService {
 
     fetchBookings() {
         return this.http
+            /**
+             * It's needed to setup the firebase to index:
+             *
+             * {
+             *  "rules": {
+             *       ".read": true,
+             *       ".write": true,
+             *       "bookings": {
+             *       ".indexOn" : ["userId"]
+             *       }
+             *   }
+             * }
+             *
+             *
+             */
             .get<{ [key: string]: BookingsData }>(`${endpoint}/bookings.json?orderBy="userId"&equalTo="${this.authService.userId}"`)
             .pipe(
                 map(bookingsData => {
