@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NavController, ModalController, ActionSheetController, LoadingController } from '@ionic/angular';
+import { NavController, ModalController, ActionSheetController, LoadingController, AlertController, ToastController } from '@ionic/angular';
 import { Place } from '../../place.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PlacesService } from '../../places.service';
@@ -15,6 +15,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 })
 export class PlaceDetailPage implements OnInit, OnDestroy {
 
+  isLoading = false;
   place: Place;
   isBookable = false;
   private placeSub: Subscription;
@@ -28,7 +29,9 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
     private modalController: ModalController,
     private actionSheetController: ActionSheetController,
     private loadingController: LoadingController,
-    private authService: AuthService
+    private authService: AuthService,
+    private alertCtrl: AlertController,
+    private toastCtrl: ToastController
   ) { }
 
   ngOnInit() {
@@ -37,11 +40,32 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
         this.navController.navigateBack('/places/tabs/discover');
         return;
       }
-      this.placeSub = this.placesService.getPlace(paramMap.get('placeId'))
-        .subscribe(place => {
-          this.place = place;
-          this.isBookable = this.place.userId !== this.authService.userId();
-        });
+      const placeId = paramMap.get('placeId');
+      this.isLoading = true;
+      this.placeSub = this.placesService.getPlace(placeId)
+        .subscribe(
+          place => {
+            this.place = place;
+            this.isBookable = this.place.userId !== this.authService.userId();
+            this.isLoading = false;
+          },
+          error => {
+            this.alertCtrl.create({
+              header: 'An error occurred!'
+              , message: 'Place cannot be fetched. Please try again later.',
+              buttons: [
+                {
+                  text: 'Okay',
+                  cssClass: 'danger'
+                  , handler: () => {
+                    this.router.navigate(['/places/tabs/discover']);
+                  }
+                }
+              ]
+            }).then(alertEl => {
+              alertEl.present();
+            });
+          });
     });
   }
 
@@ -80,7 +104,6 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
   }
 
   openBookingModel(mode: 'select' | 'random') {
-    console.log(mode);
     this.modalController.create({
       component: CreateBookingComponent,
       componentProps: {
@@ -90,7 +113,6 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
       modalEl.present();
       return modalEl.onDidDismiss();
     }).then(resultData => {
-      console.log(resultData.data, resultData.role);
       if (resultData.role === 'confirm') {
         const bookingData = resultData.data.bookingData;
         this.loadingController
@@ -109,8 +131,18 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
               bookingData.startDate,
               bookingData.endDate
             ).subscribe(() => {
-              loadingEl.dismiss();
-              this.router.navigate(['/bookings']);
+              this.toastCtrl
+                .create({
+                  animated: true,
+                  duration: 1500,
+                  message: `Booking created!`,
+                  showCloseButton: true,
+                  closeButtonText: 'Close'
+                })
+                .then(toastEL => {
+                  toastEL.present();
+                  loadingEl.dismiss();
+                });
             });
           });
       }
