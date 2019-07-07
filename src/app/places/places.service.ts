@@ -86,7 +86,7 @@ export class PlacesService {
       price,
       availableFrom,
       availableTo,
-      this.authService.userId
+      this.authService.userId()
     );
     return this.places.pipe(
       take(1),

@@ -1,7 +1,10 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { IonicModule } from '@ionic/angular';
 
 import { AuthPage } from './auth.page';
+import { FormsModule } from '@angular/forms';
 
 describe('AuthPage', () => {
   let component: AuthPage;
@@ -9,10 +12,12 @@ describe('AuthPage', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AuthPage ],
+      declarations: [AuthPage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      imports: [FormsModule, IonicModule.forRoot(),
+        RouterTestingModule],
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

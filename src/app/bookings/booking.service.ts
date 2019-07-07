@@ -30,7 +30,7 @@ export class BookingService {
         const newBooking = new Booking(
             Math.random.toString(),
             placeId,
-            this.authService.userId,
+            this.authService.userId(),
             placeTitle,
             placeImage,
             firstName,

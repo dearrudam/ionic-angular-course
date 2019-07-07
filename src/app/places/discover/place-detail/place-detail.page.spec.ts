@@ -2,6 +2,9 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PlaceDetailPage } from './place-detail.page';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('PlaceDetailPage', () => {
   let component: PlaceDetailPage;
@@ -11,6 +14,8 @@ describe('PlaceDetailPage', () => {
     TestBed.configureTestingModule({
       declarations: [ PlaceDetailPage ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      imports: [FormsModule, IonicModule.forRoot(),
+        RouterTestingModule],
     })
     .compileComponents();
   }));
