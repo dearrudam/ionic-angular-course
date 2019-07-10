@@ -5,6 +5,8 @@ import { CreateBookingComponent } from './create-booking.component';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('CreateBookingComponent', () => {
   let component: CreateBookingComponent;
@@ -17,7 +19,10 @@ describe('CreateBookingComponent', () => {
       declarations: [ CreateBookingComponent, TestHostComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [FormsModule, IonicModule.forRoot(),
-        RouterTestingModule],
+        RouterTestingModule,
+          HttpClientModule,
+          HttpClientTestingModule
+        ]
     })
     .compileComponents();
   }));

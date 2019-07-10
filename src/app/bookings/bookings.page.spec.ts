@@ -2,6 +2,9 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BookingsPage } from './bookings.page';
+import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+
 
 describe('BookingsPage', () => {
   let component: BookingsPage;
@@ -11,6 +14,10 @@ describe('BookingsPage', () => {
     TestBed.configureTestingModule({
       declarations: [ BookingsPage ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      imports: [
+        HttpClientModule,
+        HttpClientTestingModule
+      ]
     })
     .compileComponents();
   }));

@@ -5,6 +5,8 @@ import { PlaceDetailPage } from './place-detail.page';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('PlaceDetailPage', () => {
   let component: PlaceDetailPage;
@@ -12,12 +14,15 @@ describe('PlaceDetailPage', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PlaceDetailPage ],
+      declarations: [PlaceDetailPage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [FormsModule, IonicModule.forRoot(),
-        RouterTestingModule],
+        RouterTestingModule,
+        HttpClientModule,
+        HttpClientTestingModule
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
