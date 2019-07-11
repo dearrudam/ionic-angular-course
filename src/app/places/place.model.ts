@@ -10,3 +10,7 @@ export class Place {
         public userId?: string) {
     }
 }
+
+export function newSamplePlace(): Place {
+    return new Place(Math.random().toString(), Math.random().toString(), Math.random().toString(), Math.random().toString(), 999.99, new Date(), new Date(), Math.random().toString());
+}

@@ -40,20 +40,7 @@ export class EditOfferPage implements OnInit, OnDestroy {
       this.isLoading = true;
       this.placeSub = this.placeServices.getPlace(this.placeId)
         .subscribe(
-          place => {
-            this.place = place;
-            this.form = new FormGroup({
-              title: new FormControl(this.place.title, {
-                updateOn: 'blur',
-                validators: [Validators.required]
-              }),
-              description: new FormControl(this.place.description, {
-                updateOn: 'blur',
-                validators: [Validators.required, Validators.maxLength(180)]
-              })
-            });
-            this.isLoading = false;
-          },
+          this.editPlace,
           error => {
             this.alertCtrl.create({
               header: 'An error occurred!',
@@ -70,6 +57,21 @@ export class EditOfferPage implements OnInit, OnDestroy {
             });
           });
     });
+  }
+
+  editPlace(place: Place): void {
+      this.place = place;
+      this.form = new FormGroup({
+        title: new FormControl(this.place.title, {
+          updateOn: 'blur',
+          validators: [Validators.required]
+        }),
+        description: new FormControl(this.place.description, {
+          updateOn: 'blur',
+          validators: [Validators.required, Validators.maxLength(180)]
+        })
+      });
+      this.isLoading = false;
   }
 
   ngOnDestroy() {
