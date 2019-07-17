@@ -140,28 +140,39 @@ export class PlacesService {
            price: number,
            availableFrom: Date,
            availableTo: Date) {
-    const newPlace = new Place(
-      Math.random().toString(),
-      title,
-      description,
-      imageUrl,
-      price,
-      availableFrom,
-      availableTo,
-      this.authService.userId()
-    );
-    return this.http
-      .post<{ name: string }>(`${endpoint}/offered-places.json`, {
-        ...newPlace, id: null
-      }).pipe(
-        switchMap(resData => {
-          newPlace.id = resData.name;
-          return this.places;
-        }),
+
+    let newPlace: Place;
+    return this.authService.userId()
+      .pipe(
         take(1),
-        tap(places => {
-          this._places.next(places.concat(newPlace));
-        }));
+        switchMap(userId => {
+          if (!userId) {
+            throw new Error('User id not found');
+          }
+          newPlace = new Place(
+            Math.random().toString(),
+            title,
+            description,
+            imageUrl,
+            price,
+            availableFrom,
+            availableTo,
+            userId
+          );
+          return this.http
+            .post<{ name: string }>(`${endpoint}/offered-places.json`, {
+              ...newPlace, id: null
+            }).pipe(
+              switchMap(resData => {
+                newPlace.id = resData.name;
+                return this.places;
+              }),
+              take(1),
+              tap(places => {
+                this._places.next(places.concat(newPlace));
+              }));
+        })
+      );
   }
 
   updatePlace(placeId: string, title: string, description: string) {

@@ -35,23 +35,28 @@ export class BookingService {
     }
 
     fetchBookings() {
-        return this.http
-            /**
-             * It's needed to setup the firebase to index:
-             *
-             * {
-             *  "rules": {
-             *       ".read": true,
-             *       ".write": true,
-             *       "bookings": {
-             *       ".indexOn" : ["userId"]
-             *       }
-             *   }
-             * }
-             *
-             *
-             */
-            .get<{ [key: string]: BookingsData }>(`${endpoint}/bookings.json?orderBy="userId"&equalTo="${this.authService.userId}"`)
+
+        return this.authService.userId().pipe(
+            take(1),
+            switchMap(userId => {
+                return this.http
+                    /**
+                     * It's needed to setup the firebase to index:
+                     *
+                     * {
+                     *  "rules": {
+                     *       ".read": true,
+                     *       ".write": true,
+                     *       "bookings": {
+                     *       ".indexOn" : ["userId"]
+                     *       }
+                     *   }
+                     * }
+                     *
+                     *
+                     */
+                    .get<{ [key: string]: BookingsData }>(`${endpoint}/bookings.json?orderBy="userId"&equalTo="${userId}"`);
+            }))
             .pipe(
                 map(bookingsData => {
                     const bookings = [];
@@ -89,35 +94,46 @@ export class BookingService {
         bookedFrom: Date,
         bookedTo: Date) {
 
-        const newBooking = new Booking(
-            '',
-            placeId,
-            this.authService.userId(),
-            placeTitle,
-            placeImage,
-            firstName,
-            lastName,
-            guestNumber,
-            bookedFrom,
-            bookedTo
+
+        let newBooking: Booking;
+
+        return this.authService.userId().pipe(
+            take(1),
+            switchMap(userId => {
+                if (!userId) {
+                    throw new Error('No user id found');
+                }
+
+                newBooking = new Booking(
+                    '',
+                    placeId,
+                    userId,
+                    placeTitle,
+                    placeImage,
+                    firstName,
+                    lastName,
+                    guestNumber,
+                    bookedFrom,
+                    bookedTo
+                );
+
+                return this.http
+                    .post<{ name: string }>(
+                        `${endpoint}/bookings.json`,
+                        { ...newBooking, id: null }
+                    )
+                    .pipe(
+                        switchMap(bookingsData => {
+                            newBooking.id = bookingsData.name;
+                            return this.bookings;
+                        }),
+                        take(1),
+                        tap(bookings => {
+                            this._bookings.next(bookings.concat(newBooking));
+                        })
+                    );
+            })
         );
-
-
-        return this.http
-            .post<{ name: string }>(
-                `${endpoint}/bookings.json`,
-                { ...newBooking, id: null }
-            )
-            .pipe(
-                switchMap(bookingsData => {
-                    newBooking.id = bookingsData.name;
-                    return this.bookings;
-                }),
-                take(1),
-                tap(bookings => {
-                    this._bookings.next(bookings.concat(newBooking));
-                })
-            );
     }
 
     cancelBooking(bookingId: string) {
