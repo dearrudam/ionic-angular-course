@@ -14,7 +14,7 @@
   <ion-grid no-padding *ngIf="!isLoading">
     <ion-row>
       <ion-col size-sm="6"
-               offset-sm="3"  no-padding>
+               offset-sm="3" no-padding>
         <ion-img [src]="place?.imageUrl"></ion-img>
       </ion-col>
     </ion-row>
@@ -24,6 +24,25 @@
                text-center
                padding>
         <p>{{ place?.description }}</p>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="place && place.location">
+      <ion-col size-sm="6"
+               offset-sm="3"
+               text-center
+               padding>
+        <p>{{ place?.location?.address }}</p>
+      </ion-col>
+    </ion-row>
+    <ion-row
+             *ngIf="place && place.location && place.location.staticMapImageUrl">
+      <ion-col size-sm="6"
+               offset-sm="3"
+               no-padding>
+        <ion-img class="location-image"
+                 role="button"
+                 (click)="onShowFullMap()"
+                 [src]="place.location.staticMapImageUrl"></ion-img>
       </ion-col>
     </ion-row>
     <ion-row *ngIf="isBookable">

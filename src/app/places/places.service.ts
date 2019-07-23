@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { AuthService } from '../auth/auth.service';
 import { Place } from './place.model';
+import { PlaceLocation } from './location.model';
 
 
 // [
@@ -67,7 +68,8 @@ interface PlaceData {
   price: number;
   availableFrom: string;
   availableTo: string;
-  userId?: string;
+  userId: string;
+  location?: PlaceLocation;
 }
 
 @Injectable({
@@ -102,7 +104,8 @@ export class PlacesService {
                 data.price,
                 new Date(data.availableFrom),
                 new Date(data.availableTo),
-                data.userId
+                data.userId,
+                this.getLocationFrom(data.location)
               ));
             }
           }
@@ -111,6 +114,15 @@ export class PlacesService {
         tap(places => {
           this.places.next(places);
         }));
+  }
+
+  private getLocationFrom(location: PlaceLocation): PlaceLocation {
+    return location ? location : {
+      lat: 0,
+      lng: 0,
+      address: null,
+      staticMapImageUrl: null
+    };
   }
 
   getPlace(placeId: string): Observable<Place> {
@@ -128,10 +140,10 @@ export class PlacesService {
             placeData.price,
             new Date(placeData.availableFrom),
             new Date(placeData.availableTo),
-            placeData.userId
+            placeData.userId,
+            this.getLocationFrom(placeData.location)
           );
-        })
-      );
+        }));
   }
 
   addPlace(title: string,
@@ -139,7 +151,8 @@ export class PlacesService {
            imageUrl: string,
            price: number,
            availableFrom: Date,
-           availableTo: Date) {
+           availableTo: Date,
+           location: PlaceLocation) {
 
     let newPlace: Place;
     return this.authService.userId()
@@ -157,7 +170,8 @@ export class PlacesService {
             price,
             availableFrom,
             availableTo,
-            userId
+            userId,
+            location
           );
           return this.http
             .post<{ name: string }>(`${endpoint}/offered-places.json`, {
@@ -200,7 +214,8 @@ export class PlacesService {
           oldPlace.price,
           oldPlace.availableFrom,
           oldPlace.availableTo,
-          oldPlace.userId
+          oldPlace.userId,
+          this.getLocationFrom(oldPlace.location)
         );
         return this.http.put(
           `${endpoint}/offered-places/${placeId}.json`,

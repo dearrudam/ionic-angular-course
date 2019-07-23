@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  googleMapsAPIKey: 'AIzaSyAdWr-a2DWqOpS8oWBbZF3I917oR8SLsMo',
   firebaseConfig : {
     apiKey: 'AIzaSyDLlLyqUMRixlg0tSGf6CPCW61HJ7Wz93M',
     authDomain: 'ionic-angular-project-9937b.firebaseapp.com',

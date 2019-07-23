@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { BookingService } from 'src/app/bookings/booking.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { switchMap, take } from 'rxjs/operators';
+import { MapModalComponent } from '../../../shared/map-modal/map-modal.component';
 
 @Component({
   selector: 'app-place-detail',
@@ -112,6 +113,20 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
       .then(actionSheetEl => {
         actionSheetEl.present();
       });
+  }
+
+  onShowFullMap() {
+    this.modalController.create({
+      component: MapModalComponent,
+      componentProps: {
+        center: this.place.location,
+        selectable: false,
+        closeButtonText: 'Close',
+        title: this.place.location.address
+      }
+    }).then(modalEl => {
+      modalEl.present();
+    });
   }
 
   openBookingModel(mode: 'select' | 'random') {

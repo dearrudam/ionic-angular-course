@@ -39,8 +39,9 @@ export class EditOfferPage implements OnInit, OnDestroy {
       this.placeId = paramMap.get('placeId');
       this.isLoading = true;
       this.placeSub = this.placeServices.getPlace(this.placeId)
-        .subscribe(
-          this.editPlace,
+        .subscribe(place => {
+          this.editPlace(place);
+          },
           error => {
             this.alertCtrl.create({
               header: 'An error occurred!',
